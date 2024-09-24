@@ -1,5 +1,6 @@
 const { getFilter, bot, setFilter, deleteFilter, lydia } = require('../lib/')
 
+// Command to delete filters in chat
 bot(
   {
     pattern: 'stop ?(.*)',
@@ -8,13 +9,14 @@ bot(
     onlyGroup: true,
   },
   async (message, match) => {
-    if (!match) return await message.send(`*Example : .stop hi*`)
+    if (!match) return await message.send(`_Example : .stop hi_`)
     const isDel = await deleteFilter(message.jid, match)
     if (!isDel) return await message.send(`_${match} not found in filters_`)
     return await message.send(`_${match} deleted._`)
   }
 )
 
+// Command to set filters in groups
 bot(
   {
     pattern: 'filter ?(.*)',
@@ -23,10 +25,10 @@ bot(
     onlyGroup: true,
   },
   async (message, match) => {
-    match = match.match(/[\'\"](.*?)[\'\"]/gms)
+    match = match.match(/\'\" • .*?[\'\"]/gms)
     if (!match) {
       const filters = await getFilter(message.jid)
-      if (!filters) return await message.send(`_Not set any filter_\n*Example filter 'hi' 'hello'*`)
+      if (!filters) return await message.send(`_Not set any filter_\n_Example filter 'hi' 'hello'_`)
       let msg = ''
       filters.map(({ pattern }) => {
         msg += `- ${pattern}\n`
@@ -44,22 +46,33 @@ bot(
   }
 )
 
+// Main text handling logic for filters and custom replies
 bot({ on: 'text', fromMe: false, type: 'filterOrLydia' }, async (message, match) => {
   const filters = await getFilter(message.jid)
-  if (filters)
-    filters.map(async ({ pattern, regex, text }) => {
-      pattern = new RegExp(`(?:^|\\W)${pattern}(?:$|\\W)`, 'i')
-      if (pattern.test(message.text)) {
+  if (filters) {
+    for (const { pattern, text } of filters) {
+      const regex = new RegExp(`(?:^|\\W)${pattern}(?:$|\\W)`, 'i')
+      if (regex.test(message.text)) {
         await message.send(text, {
           quoted: message.data,
         })
+        return; // Exit after sending a filter response
       }
-    })
+    }
+  }
+
+  // Custom reply logic based on specific conditions
+  if (message.text.toLowerCase() === 'ping') {
+    return await message.send('Hi there! How can I assist you today?');
+  } else if (message.text.toLowerCase() === 'help me') {
+    return await message.send('Here are some commands you can use: .filter, .stop, etc.');
+  }
 
   const isLydia = await lydia(message)
   if (isLydia) return await message.send(isLydia, { quoted: message.data })
 })
 
+// Logic for handling messages from the bot itself
 bot({ on: 'text', fromMe: true, type: 'lydia' }, async (message, match) => {
   const isLydia = await lydia(message)
   if (isLydia) return await message.send(isLydia, { quoted: message.data })
