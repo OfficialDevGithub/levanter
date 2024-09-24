@@ -5,11 +5,11 @@ const path = require('path')
 const configPath = path.join(__dirname, './config.env')
 const databasePath = path.join(__dirname, './database.db')
 if (existsSync(configPath)) require('dotenv').config({ path: configPath })
-const DATABASE_URL = 'postgresql://defenderdb_owner:dSThcMmi1O6C@ep-falling-haze-a5l8nbnv.us-east-2.aws.neon.tech/defenderdb?sslmode=require'
-const SESSIONID = 'levanter_24c752092d72544c12818cd2a9bc800da9'
+const DATABASE_URL =
+  process.env.DATABASE_URL === undefined ? databasePath : process.env.DATABASE_URL
 module.exports = {
   VERSION: require('./package.json').version,
-  SESSION_ID: SESSIONID.trim(),
+  SESSION_ID: (process.env.SESSION_ID || '').trim(),
   DATABASE:
     DATABASE_URL === databasePath
       ? new Sequelize({
@@ -54,7 +54,7 @@ module.exports = {
   SEND_READ: process.env.SEND_READ,
   KOYEB: toBool(process.env.KOYEB),
   KOYEB_NAME: (process.env.KOYEB_NAME || '').trim(),
-  KOYEB_API: 'ucookxnreomw4tr74avzry2rfpqsg0099wshjbd8chsl04par6bq7u5864kj390t',
+  KOYEB_API: (process.env.KOYEB_API || '').trim(),
   AJOIN: process.env.AJOIN,
   GPT: (process.env.GPT || 'free').trim(),
   MODEL: (process.env.MODEL || 'gpt-3.5-turbo').trim(),
