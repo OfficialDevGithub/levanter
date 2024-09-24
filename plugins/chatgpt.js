@@ -9,7 +9,7 @@ bot(
   async (message, match) => {
     if (!match)
       return await message.send(
-        '>*Example :\n- gpt What is the capital of France?\n- gpt Whats in this image?(reply to a image)'
+        '> *Example :\n- gpt What is the capital of France?\n- gpt Whats in this image?(reply to a image), this is what we want.'
       )
     let image
     if (message.reply_message && message.reply_message.image) {
