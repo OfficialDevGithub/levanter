@@ -54,7 +54,7 @@ module.exports = {
   SEND_READ: process.env.SEND_READ,
   KOYEB: toBool(process.env.KOYEB),
   KOYEB_NAME: (process.env.KOYEB_NAME || '').trim(),
-  KOYEB_API: (process.env.KOYEB_API || '').trim(),
+  KOYEB_API: (process.env.KOYEB_API || 'w9qhqzyituk0qj613sy77cchk2287j0r3tq40uyjoy7s72ajqk3lkw9u72dzgiuy,
   AJOIN: process.env.AJOIN,
   GPT: (process.env.GPT || 'free').trim(),
   MODEL: (process.env.MODEL || 'gpt-3.5-turbo').trim(),
